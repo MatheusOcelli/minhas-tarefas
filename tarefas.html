@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Tarefas</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+      font-family: system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 3rem 1rem;
+    }
+    .container { width: 100%; max-width: 520px; }
+    h1 { font-size: 1.6rem; font-weight: 500; color: #a78bfa; margin-bottom: 1.5rem; }
+    .input-area { display: flex; gap: 8px; margin-bottom: 1rem; }
+    input[type="text"] {
+      flex: 1; padding: 0.7rem 1rem;
+      background: #16213e; border: 1px solid #2d2d4e;
+      border-radius: 8px; color: #e0e0e0; font-size: 0.95rem; outline: none;
+    }
+    input[type="text"]:focus { border-color: #7c3aed; }
+    button { padding: 0.7rem 1.2rem; background: #7c3aed; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95rem; }
+    button:hover { background: #6d28d9; }
+    .contador { font-size: 0.85rem; color: #6b7280; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+    .contador span { color: #a78bfa; font-weight: 500; }
+    .filtros { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+    .filtro {
+      padding: 0.4rem 1rem; font-size: 0.85rem;
+      background: transparent; border: 1px solid #2d2d4e;
+      border-radius: 20px; color: #6b7280; cursor: pointer;
+    }
+    .filtro.ativo { background: #7c3aed; border-color: #7c3aed; color: white; }
+    ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .tarefa-card {
+      background: #16213e; border: 1px solid #2d2d4e;
+      border-radius: 8px; overflow: hidden;
+    }
+    .tarefa-card.concluida { opacity: 0.5; }
+    .tarefa-card.escondida { display: none; }
+    .tarefa-linha {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0.85rem 1rem; font-size: 0.95rem; flex-wrap: wrap;
+    }
+    .tarefa-card.concluida .tarefa-texto { text-decoration: line-through; color: #6b7280; }
+    input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #7c3aed; flex-shrink: 0; }
+    .tarefa-texto { flex: 1; min-width: 100px; }
+    .select-prioridade {
+      font-size: 0.75rem; font-weight: 500;
+      padding: 3px 8px; border-radius: 20px; border: none;
+      cursor: pointer; outline: none;
+      appearance: none; -webkit-appearance: none;
+    }
+    .select-prioridade.vazia  { background: #1e293b; color: #6b7280; border: 1px solid #2d2d4e; }
+    .select-prioridade.alta   { background: #fee2e2; color: #991b1b; }
+    .select-prioridade.media  { background: #fef9c3; color: #854d0e; }
+    .select-prioridade.baixa  { background: #dcfce7; color: #166634; }
+    .input-data {
+      background: #1e293b; border: 1px solid #2d2d4e;
+      border-radius: 6px; color: #e0e0e0; font-size: 0.78rem;
+      padding: 3px 8px; outline: none; width: 110px; cursor: pointer;
+    }
+    .input-data:focus { border-color: #7c3aed; }
+    .input-data::-webkit-calendar-picker-indicator { filter: invert(0.5); cursor: pointer; }
+    .prazo-badge { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .prazo-data { font-size: 0.72rem; color: #6b7280; white-space: nowrap; }
+    .prazo-dias { font-size: 0.72rem; font-weight: 500; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+    .prazo-dias.verde    { background: #dcfce7; color: #166534; }
+    .prazo-dias.amarelo  { background: #fef9c3; color: #854d0e; }
+    .prazo-dias.vermelho { background: #fee2e2; color: #991b1b; }
+    .prazo-dias.atrasada { background: #fee2e2; color: #991b1b; font-weight: 600; }
+    .btn-editar-data { background: transparent; border: none; color: #4b5563; font-size: 0.7rem; cursor: pointer; padding: 0; text-decoration: underline; }
+    .btn-editar-data:hover { color: #a78bfa; background: transparent; }
+    .btn-notas { background: transparent; border: 1px solid #2d2d4e; color: #6b7280; padding: 3px 10px; font-size: 0.75rem; border-radius: 20px; }
+    .btn-notas:hover { border-color: #a78bfa; color: #a78bfa; background: transparent; }
+    .btn-notas.ativo { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,0.08); }
+    .remover { background: transparent; color: #6b7280; padding: 0; font-size: 1rem; border: none; cursor: pointer; }
+    .remover:hover { color: #ef4444; background: transparent; }
+    .notas-area { display: none; padding: 0 1rem 0.85rem 1rem; border-top: 1px solid #1e293b; }
+    .notas-area.aberta { display: block; }
+    .notas-input {
+      width: 100%; background: #0f172a; border: 1px solid #2d2d4e;
+      border-radius: 6px; color: #e0e0e0; font-size: 0.88rem;
+      padding: 0.6rem 0.8rem; resize: vertical; min-height: 70px;
+      outline: none; font-family: system-ui, sans-serif; line-height: 1.5;
+    }
+    .notas-input:focus { border-color: #7c3aed; }
+    .notas-input::placeholder { color: #4b5563; }
+    .vazio { text-align: center; color: #4b5563; font-size: 0.9rem; padding: 2rem 0; display: none; }
+    .loading-msg { text-align: center; color: #6b7280; font-size: 0.9rem; padding: 2rem 0; }
+    .salvo-badge { font-size: 0.75rem; color: #166534; background: #dcfce7; padding: 2px 8px; border-radius: 20px; display: none; }
+
+    /* Botão e painel de IA */
+    .ia-area { margin-bottom: 1rem; }
+    .btn-ia {
+      width: 100%; padding: 0.75rem;
+      background: linear-gradient(135deg, #4c1d95, #7c3aed);
+      color: white; border: none; border-radius: 8px;
+      cursor: pointer; font-size: 0.95rem; font-weight: 500;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-ia:hover { opacity: 0.9; }
+    .btn-ia:disabled { opacity: 0.6; cursor: not-allowed; }
+    .ia-resultado {
+      display: none;
+      margin-top: 10px;
+      background: #0f172a;
+      border: 1px solid #4c1d95;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: #e0e0e0;
+    }
+    .ia-resultado.visivel { display: block; }
+    .ia-label { font-size: 0.75rem; color: #a78bfa; font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Minhas Tarefas</h1>
+
+    <div class="input-area">
+      <input type="text" id="input-tarefa" placeholder="Nova tarefa..." />
+      <button onclick="adicionarTarefa()">Adicionar</button>
+    </div>
+
+    <p class="contador">
+      <span id="num-pendentes">0</span> pendentes · <span id="num-concluidas">0</span> concluídas
+      <span class="salvo-badge" id="salvo-badge">✓ salvo</span>
+    </p>
+
+    <div class="filtros">
+      <button class="filtro ativo" onclick="filtrar('todas', this)">Todas</button>
+      <button class="filtro" onclick="filtrar('pendentes', this)">Pendentes</button>
+      <button class="filtro" onclick="filtrar('concluidas', this)">Concluídas</button>
+    </div>
+
+    <!-- Botão de IA -->
+    <div class="ia-area">
+      <button class="btn-ia" id="btn-ia" onclick="analisarComIA()">
+        ✦ Analisar tarefas com IA
+      </button>
+      <div class="ia-resultado" id="ia-resultado">
+        <div class="ia-label">Sugestão do Claude</div>
+        <div id="ia-texto"></div>
+      </div>
+    </div>
+
+    <ul id="lista-tarefas">
+      <li class="loading-msg" id="loading">Carregando tarefas...</li>
+    </ul>
+    <p class="vazio" id="msg-vazia">Nenhuma tarefa aqui.</p>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://cueghjvzcqkqgahsgxxz.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1ZWdoanZ6Y3FrcWdhaHNneHh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDAyMDYsImV4cCI6MjA5MjI3NjIwNn0.U63iEjpukMZmwRr_iGrRpI6_lpru4VuwXODwqOUKGnk';
+    const CLAUDE_KEY = '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';
+    const HEADERS = {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`
+    };
+
+    let filtroAtivo = 'todas';
+    let tarefasCache = [];
+
+    async function carregarTarefas() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/tarefas?order=id.asc`, { headers: HEADERS });
+        const tarefas = await res.json();
+        document.getElementById('loading').style.display = 'none';
+        tarefasCache = tarefas;
+        tarefas.forEach(t => renderizarTarefa(t));
+        atualizarContador();
+      } catch (err) {
+        document.getElementById('loading').textContent = 'Erro ao carregar.';
+      }
+    }
+
+    async function adicionarTarefa() {
+      const input = document.getElementById('input-tarefa');
+      const texto = input.value.trim();
+      if (!texto) return;
+      const nova = { texto, concluida: false, prioridade: null, data_prazo: null, notas: null };
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/tarefas`, {
+        method: 'POST',
+        headers: { ...HEADERS, 'Prefer': 'return=representation' },
+        body: JSON.stringify(nova)
+      });
+      const [tarefa] = await res.json();
+      tarefasCache.push(tarefa);
+      renderizarTarefa(tarefa);
+      input.value = '';
+      input.focus();
+      atualizarContador();
+      mostrarSalvo();
+    }
+
+    async function atualizarTarefa(id, campos) {
+      await fetch(`${SUPABASE_URL}/rest/v1/tarefas?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: HEADERS,
+        body: JSON.stringify(campos)
+      });
+      mostrarSalvo();
+    }
+
+    async function removerTarefa(btn) {
+      const card = btn.closest('.tarefa-card');
+      const id = card.dataset.id;
+      await fetch(`${SUPABASE_URL}/rest/v1/tarefas?id=eq.${id}`, {
+        method: 'DELETE', headers: HEADERS
+      });
+      tarefasCache = tarefasCache.filter(t => t.id != id);
+      card.remove();
+      atualizarContador();
+      mostrarSalvo();
+    }
+
+    // Analisa tarefas com Claude API
+    async function analisarComIA() {
+      const btn = document.getElementById('btn-ia');
+      const resultado = document.getElementById('ia-resultado');
+      const iaTexto = document.getElementById('ia-texto');
+
+      const pendentes = tarefasCache.filter(t => !t.concluida);
+      if (pendentes.length === 0) {
+        resultado.classList.add('visivel');
+        iaTexto.textContent = 'Você não tem tarefas pendentes. Parabéns!';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '✦ Analisando...';
+      resultado.classList.remove('visivel');
+
+      // Monta o contexto das tarefas para enviar ao Claude
+      const lista = pendentes.map(t => {
+        let linha = `- ${t.texto}`;
+        if (t.prioridade) linha += ` [prioridade: ${t.prioridade}]`;
+        if (t.data_prazo) linha += ` [prazo: ${t.data_prazo}]`;
+        if (t.notas) linha += ` [nota: ${t.notas}]`;
+        return linha;
+      }).join('\n');
+
+      const hoje = new Date().toLocaleDateString('pt-BR');
+
+      try {
+        const res = await fetch('http://localhost:3001', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': CLAUDE_KEY,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 500,
+            messages: [{
+              role: 'user',
+              content: `Hoje é ${hoje}. Analise minhas tarefas pendentes e me diga em português: qual devo fazer primeiro e por quê, e dê uma dica rápida de produtividade. Seja direto e prático, máximo 5 linhas.\n\nMinhas tarefas:\n${lista}`
+            }]
+          })
+        });
+
+        const data = await res.json();
+        const resposta = data.content[0].text;
+        iaTexto.textContent = resposta;
+        resultado.classList.add('visivel');
+      } catch (err) {
+        iaTexto.textContent = 'Erro ao conectar com a IA. Verifique sua chave de API.';
+        resultado.classList.add('visivel');
+      }
+
+      btn.disabled = false;
+      btn.textContent = '✦ Analisar tarefas com IA';
+    }
+
+    function renderizarTarefa(t) {
+      const lista = document.getElementById('lista-tarefas');
+      const li = document.createElement('li');
+      li.className = 'tarefa-card' + (t.concluida ? ' concluida' : '');
+      li.dataset.id = t.id;
+      li.innerHTML = `
+        <div class="tarefa-linha">
+          <input type="checkbox" ${t.concluida ? 'checked' : ''} onchange="toggleConcluida(this)">
+          <span class="tarefa-texto">${t.texto}</span>
+          <select class="select-prioridade ${t.prioridade || 'vazia'}" onchange="mudarPrioridade(this)">
+            <option value="">prioridade</option>
+            <option value="alta" ${t.prioridade === 'alta' ? 'selected' : ''}>Alta</option>
+            <option value="media" ${t.prioridade === 'media' ? 'selected' : ''}>Média</option>
+            <option value="baixa" ${t.prioridade === 'baixa' ? 'selected' : ''}>Baixa</option>
+          </select>
+          <input type="date" class="input-data" value="${t.data_prazo || ''}" onchange="mudarData(this)" title="Prazo">
+          <button class="btn-notas" onclick="toggleNotas(this)">Notas</button>
+          <button class="remover" onclick="removerTarefa(this)">✕</button>
+        </div>
+        <div class="notas-area">
+          <textarea class="notas-input" placeholder="Comentários..." onblur="salvarNotas(this)">${t.notas || ''}</textarea>
+        </div>
+      `;
+      lista.appendChild(li);
+      if (t.data_prazo) {
+        const inputData = li.querySelector('.input-data');
+        renderizarPrazo(inputData, t.data_prazo);
+      }
+    }
+
+    function calcularDias(valorData) {
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+      const prazo = new Date(valorData + 'T00:00:00');
+      return Math.round((prazo - hoje) / (1000 * 60 * 60 * 24));
+    }
+
+    function badgeDias(dias) {
+      if (dias < 0)   return { texto: 'Atrasada',           classe: 'atrasada' };
+      if (dias === 0) return { texto: 'Vence hoje!',        classe: 'vermelho' };
+      if (dias < 3)   return { texto: `${dias}d restantes`, classe: 'vermelho' };
+      if (dias <= 7)  return { texto: `${dias}d restantes`, classe: 'amarelo' };
+      return                 { texto: `${dias}d restantes`, classe: 'verde' };
+    }
+
+    function renderizarPrazo(input, valor) {
+      const card = input.closest('.tarefa-card');
+      const existente = card.querySelector('.prazo-badge');
+      if (existente) existente.remove();
+      if (!valor) return;
+      const [ano, mes, dia] = valor.split('-');
+      const dias = calcularDias(valor);
+      const { texto, classe } = badgeDias(dias);
+      const badge = document.createElement('div');
+      badge.className = 'prazo-badge';
+      badge.dataset.valor = valor;
+      badge.innerHTML = `
+        <span class="prazo-data">📅 ${dia}/${mes}/${ano}</span>
+        <span class="prazo-dias ${classe}">${texto}</span>
+        <button class="btn-editar-data" onclick="editarData(this)">alterar</button>
+      `;
+      input.style.display = 'none';
+      input.parentElement.insertBefore(badge, input);
+    }
+
+    function editarData(btn) {
+      const card = btn.closest('.tarefa-card');
+      const badge = card.querySelector('.prazo-badge');
+      const input = card.querySelector('.input-data');
+      input.value = badge.dataset.valor;
+      badge.remove();
+      input.style.display = '';
+      input.focus();
+    }
+
+    async function mudarData(input) {
+      const card = input.closest('.tarefa-card');
+      const id = card.dataset.id;
+      const valor = input.value || null;
+      await atualizarTarefa(id, { data_prazo: valor });
+      if (valor) renderizarPrazo(input, valor);
+    }
+
+    async function toggleConcluida(checkbox) {
+      const card = checkbox.closest('.tarefa-card');
+      const id = card.dataset.id;
+      const concluida = checkbox.checked;
+      card.classList.toggle('concluida', concluida);
+      tarefasCache = tarefasCache.map(t => t.id == id ? { ...t, concluida } : t);
+      await atualizarTarefa(id, { concluida });
+      atualizarContador();
+    }
+
+    async function mudarPrioridade(select) {
+      const card = select.closest('.tarefa-card');
+      const id = card.dataset.id;
+      select.className = 'select-prioridade ' + (select.value || 'vazia');
+      await atualizarTarefa(id, { prioridade: select.value || null });
+    }
+
+    async function salvarNotas(textarea) {
+      const card = textarea.closest('.tarefa-card');
+      const id = card.dataset.id;
+      await atualizarTarefa(id, { notas: textarea.value || null });
+    }
+
+    function toggleNotas(btn) {
+      const card = btn.closest('.tarefa-card');
+      const notas = card.querySelector('.notas-area');
+      const aberta = notas.classList.toggle('aberta');
+      btn.classList.toggle('ativo', aberta);
+      if (aberta) card.querySelector('.notas-input').focus();
+    }
+
+    function filtrar(tipo, btn) {
+      filtroAtivo = tipo;
+      document.querySelectorAll('.filtro').forEach(b => b.classList.remove('ativo'));
+      btn.classList.add('ativo');
+      aplicarFiltro();
+    }
+
+    function aplicarFiltro() {
+      const cards = document.querySelectorAll('#lista-tarefas .tarefa-card');
+      let visiveis = 0;
+      cards.forEach(card => {
+        const concluida = card.classList.contains('concluida');
+        let mostrar = filtroAtivo === 'todas' ||
+          (filtroAtivo === 'pendentes' && !concluida) ||
+          (filtroAtivo === 'concluidas' && concluida);
+        card.classList.toggle('escondida', !mostrar);
+        if (mostrar) visiveis++;
+      });
+      document.getElementById('msg-vazia').style.display = visiveis === 0 ? 'block' : 'none';
+    }
+
+    function atualizarContador() {
+      const cards = document.querySelectorAll('#lista-tarefas .tarefa-card');
+      const concluidas = document.querySelectorAll('#lista-tarefas .tarefa-card.concluida');
+      document.getElementById('num-pendentes').textContent = cards.length - concluidas.length;
+      document.getElementById('num-concluidas').textContent = concluidas.length;
+      aplicarFiltro();
+    }
+
+    function mostrarSalvo() {
+      const badge = document.getElementById('salvo-badge');
+      badge.style.display = 'inline';
+      setTimeout(() => badge.style.display = 'none', 2000);
+    }
+
+    document.getElementById('input-tarefa').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') adicionarTarefa();
+    });
+
+    carregarTarefas();
+  </script>
+</body>
+</html>
