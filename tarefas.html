@@ -161,7 +161,7 @@
   <script>
     const SUPABASE_URL = 'https://cueghjvzcqkqgahsgxxz.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1ZWdoanZ6Y3FrcWdhaHNneHh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDAyMDYsImV4cCI6MjA5MjI3NjIwNn0.U63iEjpukMZmwRr_iGrRpI6_lpru4VuwXODwqOUKGnk';
-    const CLAUDE_KEY = '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';
+    const CLAUDE_KEY = '';
     const HEADERS = {
       'Content-Type': 'application/json',
       'apikey': SUPABASE_KEY,
@@ -180,7 +180,7 @@
         tarefas.forEach(t => renderizarTarefa(t));
         atualizarContador();
       } catch (err) {
-        document.getElementById('loading').textContent = 'Erro ao carregar.';
+        document.getElementById('loading').texContent = 'Erro ao carregar.';
       }
     }
 
