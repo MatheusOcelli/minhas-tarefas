@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace — Milhas para Todos</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #f9fafb; color: #1a1a2e; }
+
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 2rem; border-bottom: 1px solid #e5e7eb;
+      background: #fff; position: sticky; top: 0; z-index: 10;
+    }
+    .logo { font-size: 1.3rem; font-weight: 700; color: #1d4ed8; text-decoration: none; }
+    .logo span { color: #1a1a2e; }
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+    nav a { font-size: 0.9rem; color: #6b7280; text-decoration: none; }
+    nav a:hover { color: #1d4ed8; }
+    .btn-primary {
+      background: #1d4ed8; color: white; padding: 0.55rem 1.2rem;
+      border-radius: 8px; font-size: 0.9rem; text-decoration: none;
+      font-weight: 500; border: none; cursor: pointer;
+    }
+    .btn-primary:hover { background: #1e40af; }
+
+    .page-header {
+      background: #fff; border-bottom: 1px solid #e5e7eb;
+      padding: 2rem 2rem 1.5rem;
+    }
+    .page-header-inner { max-width: 1000px; margin: 0 auto; }
+    .page-header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .page-header p { color: #6b7280; font-size: 0.9rem; }
+
+    .filtros-bar {
+      background: #fff; border-bottom: 1px solid #e5e7eb;
+      padding: 1rem 2rem;
+    }
+    .filtros-inner {
+      max-width: 1000px; margin: 0 auto;
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    }
+    .filtro-label { font-size: 0.85rem; color: #6b7280; margin-right: 4px; }
+    .filtro-btn {
+      padding: 0.4rem 1rem; font-size: 0.85rem;
+      background: transparent; border: 1px solid #e5e7eb;
+      border-radius: 20px; color: #6b7280; cursor: pointer;
+    }
+    .filtro-btn:hover { border-color: #1d4ed8; color: #1d4ed8; }
+    .filtro-btn.ativo { background: #1d4ed8; border-color: #1d4ed8; color: white; }
+
+    .main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+
+    .ofertas-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .ofertas-count { font-size: 0.9rem; color: #6b7280; }
+    .ofertas-count span { color: #1a1a2e; font-weight: 600; }
+
+    .ofertas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .oferta-card {
+      background: #fff; border: 1px solid #e5e7eb;
+      border-radius: 12px; padding: 1.5rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .oferta-card:hover { border-color: #1d4ed8; box-shadow: 0 0 0 3px #eff6ff; }
+    .oferta-card.negociacao { border-color: #f59e0b; background: #fffbeb; }
+    .oferta-card.vendida { opacity: 0.5; pointer-events: none; }
+
+    .oferta-top {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; margin-bottom: 1rem;
+    }
+    .programa-badge {
+      font-size: 0.75rem; font-weight: 600; padding: 4px 10px;
+      border-radius: 6px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-latam { background: #fee2e2; color: #991b1b; }
+    .badge-smiles { background: #fed7aa; color: #9a3412; }
+    .badge-tudoazul { background: #dbeafe; color: #1e40af; }
+
+    .status-badge {
+      font-size: 0.72rem; padding: 3px 8px; border-radius: 20px; font-weight: 500;
+    }
+    .status-disponivel { background: #dcfce7; color: #166534; }
+    .status-negociacao { background: #fef3c7; color: #92400e; }
+    .status-vendida { background: #f3f4f6; color: #6b7280; }
+
+    .oferta-milhas {
+      font-size: 1.8rem; font-weight: 700; color: #1a1a2e; margin-bottom: 4px;
+    }
+    .oferta-milhas span { font-size: 0.9rem; font-weight: 400; color: #6b7280; }
+
+    .oferta-preco {
+      font-size: 0.9rem; color: #6b7280; margin-bottom: 1rem;
+    }
+    .oferta-preco strong { color: #1d4ed8; font-size: 1rem; }
+
+    .oferta-vendedor {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 1.2rem; padding-top: 1rem;
+      border-top: 1px solid #f3f4f6;
+    }
+    .avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #eff6ff; color: #1d4ed8;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 600; flex-shrink: 0;
+    }
+    .vendedor-info { flex: 1; }
+    .vendedor-nome { font-size: 0.85rem; font-weight: 500; }
+    .vendedor-meta { font-size: 0.75rem; color: #6b7280; }
+
+    .btn-comprar {
+      width: 100%; padding: 0.7rem;
+      background: #1d4ed8; color: white;
+      border: none; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 500; cursor: pointer;
+    }
+    .btn-comprar:hover { background: #1e40af; }
+    .btn-comprar:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4); z-index: 100;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.aberto { display: flex; }
+    .modal {
+      background: #fff; border-radius: 16px;
+      padding: 2rem; max-width: 440px; width: 90%;
+    }
+    .modal h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .modal p { font-size: 0.9rem; color: #6b7280; margin-bottom: 1.5rem; line-height: 1.6; }
+    .modal-resumo {
+      background: #f9fafb; border-radius: 8px; padding: 1rem;
+      margin-bottom: 1.5rem; font-size: 0.9rem;
+    }
+    .modal-resumo div { display: flex; justify-content: space-between; padding: 4px 0; }
+    .modal-resumo strong { color: #1a1a2e; }
+    .modal-input {
+      width: 100%; padding: 0.7rem 1rem;
+      border: 1px solid #e5e7eb; border-radius: 8px;
+      font-size: 0.9rem; outline: none; margin-bottom: 1rem;
+    }
+    .modal-input:focus { border-color: #1d4ed8; }
+    .modal-btns { display: flex; gap: 8px; }
+    .btn-cancelar {
+      flex: 1; padding: 0.7rem; background: transparent;
+      border: 1px solid #e5e7eb; border-radius: 8px;
+      font-size: 0.9rem; cursor: pointer; color: #6b7280;
+    }
+    .btn-cancelar:hover { background: #f9fafb; }
+    .btn-confirmar {
+      flex: 2; padding: 0.7rem; background: #1d4ed8;
+      border: none; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 500; cursor: pointer; color: white;
+    }
+    .btn-confirmar:hover { background: #1e40af; }
+
+    .sucesso-msg {
+      display: none; text-align: center; padding: 1rem 0;
+    }
+    .sucesso-icon {
+      width: 56px; height: 56px; background: #dcfce7;
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 1.5rem;
+      margin: 0 auto 1rem;
+    }
+    .vazio { text-align: center; padding: 4rem 0; color: #9ca3af; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">Milhas<span>paraTodos</span></a>
+    <nav>
+      <a href="marketplace.html">Comprar milhas</a>
+      <a href="anunciar.html">Vender milhas</a>
+      <a href="index.html#como">Como funciona</a>
+    </nav>
+    <a href="anunciar.html" class="btn-primary">Anunciar milhas</a>
+  </header>
+
+  <div class="page-header">
+    <div class="page-header-inner">
+      <h1>Marketplace de milhas</h1>
+      <p>Encontre a melhor oferta e voe mais barato</p>
+    </div>
+  </div>
+
+  <div class="filtros-bar">
+    <div class="filtros-inner">
+      <span class="filtro-label">Programa:</span>
+      <button class="filtro-btn ativo" onclick="filtrar('todos', this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrar('latampass', this)">LatamPass</button>
+      <button class="filtro-btn" onclick="filtrar('smiles', this)">Smiles</button>
+      <button class="filtro-btn" onclick="filtrar('tudoazul', this)">TudoAzul</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="ofertas-header">
+      <div class="ofertas-count"><span id="total-ofertas">0</span> ofertas disponíveis</div>
+    </div>
+    <div class="ofertas-grid" id="ofertas-grid">
+      <div class="vazio" id="loading">Carregando ofertas...</div>
+    </div>
+  </div>
+
+  <!-- Modal de compra -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div id="modal-form">
+        <h2>Confirmar interesse</h2>
+        <p>Ao confirmar, o vendedor será notificado por email e entrará em contato para finalizar a transferência das milhas.</p>
+        <div class="modal-resumo" id="modal-resumo"></div>
+        <input type="email" class="modal-input" id="modal-email" placeholder="Seu email para contato" />
+        <div class="modal-btns">
+          <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+          <button class="btn-confirmar" onclick="confirmarCompra()">Confirmar interesse</button>
+        </div>
+      </div>
+      <div class="sucesso-msg" id="sucesso-msg">
+        <div class="sucesso-icon">✓</div>
+        <h2 style="margin-bottom:0.5rem;">Interesse registrado!</h2>
+        <p>O vendedor foi notificado e entrará em contato com você em breve pelo email informado.</p>
+        <button class="btn-primary" onclick="fecharModal()" style="margin-top:1rem;padding:0.7rem 2rem;">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://mhsdoibdkjcgidunglab.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oc2RvaWJka2pjZ2lkdW5nbGFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4MDE3MjQsImV4cCI6MjA5MjM3NzcyNH0.Wx8eOHGq7s2sghJ3nx_huh_rBqZBiJR41w2SdMRjAqo';
+
+    let ofertas = [];
+    let filtroAtivo = 'todos';
+    let ofertaSelecionada = null;
+
+    // Dados de exemplo para demonstração
+    const ofertasExemplo = [
+      { id: 1, programa: 'latampass', quantidade: 50000, preco_por_mil: 28, vendedor: 'Carlos M.', status: 'disponivel', criado_em: '2026-04-20' },
+      { id: 2, programa: 'smiles', quantidade: 30000, preco_por_mil: 25, vendedor: 'Ana P.', status: 'disponivel', criado_em: '2026-04-19' },
+      { id: 3, programa: 'tudoazul', quantidade: 80000, preco_por_mil: 22, vendedor: 'Roberto S.', status: 'disponivel', criado_em: '2026-04-18' },
+      { id: 4, programa: 'latampass', quantidade: 20000, preco_por_mil: 30, vendedor: 'Fernanda L.', status: 'negociacao', criado_em: '2026-04-17' },
+      { id: 5, programa: 'smiles', quantidade: 100000, preco_por_mil: 24, vendedor: 'Paulo R.', status: 'disponivel', criado_em: '2026-04-16' },
+      { id: 6, programa: 'tudoazul', quantidade: 15000, preco_por_mil: 20, vendedor: 'Mariana C.', status: 'disponivel', criado_em: '2026-04-15' },
+    ];
+
+    const programaLabel = { latampass: 'LatamPass', smiles: 'Smiles', tudoazul: 'TudoAzul' };
+    const programaBadge = { latampass: 'badge-latam', smiles: 'badge-smiles', tudoazul: 'badge-tudoazul' };
+    const statusLabel = { disponivel: 'Disponível', negociacao: 'Em negociação', vendida: 'Vendida' };
+    const statusBadge = { disponivel: 'status-disponivel', negociacao: 'status-negociacao', vendida: 'status-vendida' };
+
+    function iniciais(nome) {
+      return nome.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    function renderOfertas() {
+      const grid = document.getElementById('ofertas-grid');
+      const filtradas = filtroAtivo === 'todos'
+        ? ofertas
+        : ofertas.filter(o => o.programa === filtroAtivo);
+
+      document.getElementById('total-ofertas').textContent = filtradas.filter(o => o.status === 'disponivel').length;
+
+      if (filtradas.length === 0) {
+        grid.innerHTML = '<div class="vazio">Nenhuma oferta encontrada para este filtro.</div>';
+        return;
+      }
+
+      grid.innerHTML = filtradas.map(o => `
+        <div class="oferta-card ${o.status === 'negociacao' ? 'negociacao' : ''} ${o.status === 'vendida' ? 'vendida' : ''}">
+          <div class="oferta-top">
+            <span class="programa-badge ${programaBadge[o.programa]}">${programaLabel[o.programa]}</span>
+            <span class="status-badge ${statusBadge[o.status]}">${statusLabel[o.status]}</span>
+          </div>
+          <div class="oferta-milhas">${o.quantidade.toLocaleString('pt-BR')} <span>milhas</span></div>
+          <div class="oferta-preco">
+            <strong>R$ ${o.preco_por_mil}/mil pts</strong> · Total aprox. <strong>R$ ${((o.quantidade / 1000) * o.preco_por_mil).toLocaleString('pt-BR', {minimumFractionDigits: 0})}</strong>
+          </div>
+          <div class="oferta-vendedor">
+            <div class="avatar">${iniciais(o.vendedor)}</div>
+            <div class="vendedor-info">
+              <div class="vendedor-nome">${o.vendedor}</div>
+              <div class="vendedor-meta">Anunciado em ${new Date(o.criado_em).toLocaleDateString('pt-BR')}</div>
+            </div>
+          </div>
+          <button class="btn-comprar" onclick="abrirModal(${o.id})" ${o.status !== 'disponivel' ? 'disabled' : ''}>
+            ${o.status === 'disponivel' ? 'Tenho interesse' : o.status === 'negociacao' ? 'Em negociação' : 'Vendida'}
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function filtrar(tipo, btn) {
+      filtroAtivo = tipo;
+      document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
+      btn.classList.add('ativo');
+      renderOfertas();
+    }
+
+    function abrirModal(id) {
+      ofertaSelecionada = ofertas.find(o => o.id === id);
+      if (!ofertaSelecionada) return;
+      const resumo = document.getElementById('modal-resumo');
+      resumo.innerHTML = `
+        <div><span>Programa</span><strong>${programaLabel[ofertaSelecionada.programa]}</strong></div>
+        <div><span>Quantidade</span><strong>${ofertaSelecionada.quantidade.toLocaleString('pt-BR')} milhas</strong></div>
+        <div><span>Preço por mil</span><strong>R$ ${ofertaSelecionada.preco_por_mil}</strong></div>
+        <div><span>Total aprox.</span><strong>R$ ${((ofertaSelecionada.quantidade / 1000) * ofertaSelecionada.preco_por_mil).toLocaleString('pt-BR')}</strong></div>
+        <div><span>Vendedor</span><strong>${ofertaSelecionada.vendedor}</strong></div>
+      `;
+      document.getElementById('modal-form').style.display = 'block';
+      document.getElementById('sucesso-msg').style.display = 'none';
+      document.getElementById('modal').classList.add('aberto');
+    }
+
+    function fecharModal() {
+      document.getElementById('modal').classList.remove('aberto');
+      document.getElementById('modal-email').value = '';
+      ofertaSelecionada = null;
+    }
+
+    function confirmarCompra() {
+      const email = document.getElementById('modal-email').value.trim();
+      if (!email || !email.includes('@')) {
+        document.getElementById('modal-email').style.borderColor = '#ef4444';
+        return;
+      }
+      // Marca oferta como em negociação localmente
+      if (ofertaSelecionada) {
+        ofertaSelecionada.status = 'negociacao';
+        renderOfertas();
+      }
+      document.getElementById('modal-form').style.display = 'none';
+      document.getElementById('sucesso-msg').style.display = 'block';
+    }
+
+    // Carrega ofertas — usa exemplo se Supabase não estiver configurado
+    async function carregarOfertas() {
+      if (!SUPABASE_KEY) {
+        ofertas = ofertasExemplo;
+        renderOfertas();
+        return;
+      }
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/ofertas?order=criado_em.desc&status=eq.disponivel`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        ofertas = await res.json();
+        renderOfertas();
+      } catch {
+        ofertas = ofertasExemplo;
+        renderOfertas();
+      }
+    }
+
+    carregarOfertas();
+  </script>
+</body>
+</html>

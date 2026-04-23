@@ -3,72 +3,300 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Matheus Ocelli — Página pessoal</title>
-</head>
-<body style="margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(145deg, #0f1419 0%, #1a2332 50%, #0d1117 100%); color: #f0f4f8; padding: 2rem; box-sizing: border-box;">
+  <title>Milhas para Todos</title>
   <style>
-    @keyframes fadeInDown {
-      0% {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #fff; color: #1a1a2e; }
+
+    /* Header */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 2rem; border-bottom: 1px solid #e5e7eb;
+      position: sticky; top: 0; background: #fff; z-index: 10;
     }
-    .animated-title {
-      animation: fadeInDown 1.1s cubic-bezier(0.27,0.74,0.36,1) both;
+    .logo { font-size: 1.3rem; font-weight: 700; color: #1d4ed8; letter-spacing: -0.02em; }
+    .logo span { color: #1a1a2e; }
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+    nav a { font-size: 0.9rem; color: #6b7280; text-decoration: none; }
+    nav a:hover { color: #1d4ed8; }
+    .btn-primary {
+      background: #1d4ed8; color: white; padding: 0.55rem 1.2rem;
+      border-radius: 8px; font-size: 0.9rem; text-decoration: none;
+      font-weight: 500; border: none; cursor: pointer;
     }
-    .contact-form input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    .btn-primary:hover { background: #1e40af; }
+    .btn-outline {
+      background: transparent; color: #1d4ed8; padding: 0.55rem 1.2rem;
+      border-radius: 8px; font-size: 0.9rem; text-decoration: none;
+      font-weight: 500; border: 1.5px solid #1d4ed8; cursor: pointer;
     }
-    .contact-form input::placeholder {
-      color: #64748b;
+    .btn-outline:hover { background: #eff6ff; }
+
+    /* Hero */
+    .hero {
+      max-width: 900px; margin: 0 auto;
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block; background: #eff6ff; color: #1d4ed8;
+      font-size: 0.8rem; font-weight: 500; padding: 4px 14px;
+      border-radius: 20px; margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700; line-height: 1.2;
+      color: #1a1a2e; margin-bottom: 1.2rem;
+      letter-spacing: -0.03em;
+    }
+    .hero h1 span { color: #1d4ed8; }
+    .hero p {
+      font-size: 1.1rem; color: #6b7280;
+      max-width: 560px; margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+    .hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-lg {
+      padding: 0.85rem 2rem; font-size: 1rem; border-radius: 10px;
+      font-weight: 600; text-decoration: none; border: none; cursor: pointer;
+    }
+
+    /* Stats */
+    .stats {
+      display: flex; justify-content: center; gap: 3rem;
+      padding: 2rem; border-top: 1px solid #f3f4f6;
+      border-bottom: 1px solid #f3f4f6;
+      max-width: 700px; margin: 0 auto;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 1.8rem; font-weight: 700; color: #1d4ed8; }
+    .stat-lbl { font-size: 0.85rem; color: #6b7280; margin-top: 2px; }
+
+    /* Programas */
+    .programas {
+      padding: 4rem 2rem;
+      max-width: 900px; margin: 0 auto;
+      text-align: center;
+    }
+    .programas h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .programas p { color: #6b7280; margin-bottom: 2.5rem; }
+    .programas-grid {
+      <div class="programas-grid">
+  <div class="programa-card">
+    <div style="height:44px;display:flex;align-items:center;margin-bottom:1rem;">
+      <svg width="120" height="32" viewBox="0 0 120 32" fill="none">
+        <rect width="120" height="32" rx="6" fill="#E31837"/>
+        <text x="10" y="22" font-family="system-ui" font-weight="700" font-size="14" fill="white">LATAM</text>
+        <text x="72" y="22" font-family="system-ui" font-weight="400" font-size="11" fill="white">Pass</text>
+      </svg>
+    </div>
+    <h3>LatamPass</h3>
+    <p>Programa de fidelidade da Latam Airlines, válido para voos nacionais e internacionais.</p>
+    <span class="programa-tag">Latam Airlines</span>
+  </div>
+  <div class="programa-card">
+    <div style="height:44px;display:flex;align-items:center;margin-bottom:1rem;">
+      <svg width="120" height="32" viewBox="0 0 120 32" fill="none">
+        <rect width="120" height="32" rx="6" fill="#FF6600"/>
+        <text x="10" y="22" font-family="system-ui" font-weight="700" font-size="16" fill="white">smiles</text>
+      </svg>
+    </div>
+    <h3>Smiles</h3>
+    <p>Programa da Gol Linhas Aéreas com ampla cobertura de destinos no Brasil e exterior.</p>
+    <span class="programa-tag">Gol Linhas Aéreas</span>
+  </div>
+  <div class="programa-card">
+    <div style="height:44px;display:flex;align-items:center;margin-bottom:1rem;">
+      <svg width="120" height="32" viewBox="0 0 120 32" fill="none">
+        <rect width="120" height="32" rx="6" fill="#1B3F8B"/>
+        <text x="10" y="22" font-family="system-ui" font-weight="700" font-size="13" fill="white">TudoAzul</text>
+      </svg>
+    </div>
+    <h3>TudoAzul</h3>
+    <p>Programa de pontos da Azul Linhas Aéreas com foco em destinos regionais brasileiros.</p>
+    <span class="programa-tag">Azul Linhas Aéreas</span>
+  </div>
+</div>
+    }
+    .programa-card {
+      border: 1px solid #e5e7eb; border-radius: 12px;
+      padding: 1.5rem; text-align: left;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .programa-card:hover { border-color: #1d4ed8; box-shadow: 0 0 0 3px #eff6ff; }
+    .programa-logo {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;
+    }
+    .latam { background: #fef3c7; color: #92400e; }
+    .smiles { background: #fce7f3; color: #9d174d; }
+    .tudo { background: #e0f2fe; color: #075985; }
+    .programa-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+    .programa-card p { font-size: 0.85rem; color: #6b7280; margin: 0; }
+    .programa-tag {
+      display: inline-block; margin-top: 10px;
+      background: #f3f4f6; color: #374151;
+      font-size: 0.75rem; padding: 2px 10px; border-radius: 20px;
+    }
+
+    /* Como funciona */
+    .como {
+      background: #f9fafb;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    .como-inner { max-width: 900px; margin: 0 auto; }
+    .como h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .como p { color: #6b7280; margin-bottom: 2.5rem; }
+    .steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px; text-align: left;
+    }
+    .step {
+      background: #fff; border: 1px solid #e5e7eb;
+      border-radius: 12px; padding: 1.5rem;
+    }
+    .step-num {
+      width: 32px; height: 32px; background: #eff6ff; color: #1d4ed8;
+      border-radius: 8px; display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .step h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; }
+    .step p { font-size: 0.85rem; color: #6b7280; margin: 0; line-height: 1.6; }
+
+    /* CTA Final */
+    .cta-final {
+      padding: 5rem 2rem; text-align: center;
+      max-width: 600px; margin: 0 auto;
+    }
+    .cta-final h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem; }
+    .cta-final p { color: #6b7280; margin-bottom: 2rem; line-height: 1.7; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid #e5e7eb;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 0.85rem; color: #9ca3af;
     }
   </style>
-  <main style="max-width: 32rem; width: 100%; text-align: center;">
-    <h1 class="animated-title" style="margin: 0 0 0.5rem; font-size: clamp(1.75rem, 5vw, 2.25rem); font-weight: 700; letter-spacing: -0.02em; color: #ffffff;">
-      Matheus Ocelli
-    </h1>
-    <p style="margin: 0 0 2rem; font-size: 1.05rem; line-height: 1.6; color: #c8d4e0; border-left: 3px solid #3b82f6; padding-left: 1rem; text-align: left; display: inline-block; max-width: 100%;">
-      Usando a IA para buscar minha liberdade financeira.
-    </p>
-    <h2 style="margin: 0 0 1rem; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #94a3b8;">
-      Hobbies
-    </h2>
-    <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.75rem; text-align: left;">
-      <li style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 0.85rem 1.1rem; border: 1px solid rgba(255,255,255,0.08);">
-        <span style="color: #60a5fa; margin-right: 0.5rem;">◆</span> Praticar esportes
-      </li>
-      <li style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 0.85rem 1.1rem; border: 1px solid rgba(255,255,255,0.08);">
-        <span style="color: #60a5fa; margin-right: 0.5rem;">◆</span> Beber com os amigos
-      </li>
-      <li style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 0.85rem 1.1rem; border: 1px solid rgba(255,255,255,0.08);">
-        <span style="color: #60a5fa; margin-right: 0.5rem;">◆</span> Viajar
-      </li>
-    </ul>
+</head>
+<body>
 
-    <section style="margin-top: 2.5rem; text-align: left;">
-      <h2 style="margin: 0 0 1rem; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #94a3b8; text-align: center;">
-        Contato
-      </h2>
-      <form class="contact-form" action="#" method="post" style="display: flex; flex-direction: column; gap: 1rem;">
-        <div style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 0.85rem 1.1rem; border: 1px solid rgba(255,255,255,0.08);">
-          <label for="contato-nome" style="display: block; margin-bottom: 0.4rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8;">Nome</label>
-          <input type="text" id="contato-nome" name="nome" required autocomplete="name" placeholder="Seu nome" style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.25); color: #f0f4f8; font-size: 1rem; font-family: inherit;">
+  <!-- Header -->
+  <header>
+    <div class="logo">Milhas<span>paraTodos</span></div>
+    <nav>
+      <a href="marketplace.html">Comprar milhas</a>
+      <a href="anunciar.html">Vender milhas</a>
+      <a href="#como">Como funciona</a>
+    </nav>
+    <div style="display:flex;gap:8px;">
+      <a href="anunciar.html" class="btn-outline">Anunciar milhas</a>
+      <a href="marketplace.html" class="btn-primary">Ver ofertas</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">Marketplace de milhas aéreas</div>
+    <h1>Compre e venda milhas<br>com <span>segurança</span></h1>
+    <p>A plataforma que conecta quem tem milhas sobrando com quem quer voar mais barato. LatamPass, Smiles e TudoAzul em um só lugar.</p>
+    <div class="hero-cta">
+      <a href="marketplace.html" class="btn-primary btn-lg">Ver ofertas disponíveis</a>
+      <a href="anunciar.html" class="btn-outline btn-lg">Anunciar minhas milhas</a>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-lbl">Programas suportados</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0%</div>
+      <div class="stat-lbl">Taxa para anunciar</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-lbl">Seguro e verificado</div>
+    </div>
+  </div>
+
+  <!-- Programas -->
+  <section class="programas">
+    <h2>Programas disponíveis</h2>
+    <p>Compre e venda milhas dos principais programas de fidelidade do Brasil</p>
+    <div class="programas-grid">
+      <div class="programa-card">
+        <div class="programa-logo latam">LP</div>
+        <h3>LatamPass</h3>
+        <p>Programa de fidelidade da Latam Airlines, válido para voos nacionais e internacionais.</p>
+        <span class="programa-tag">Latam Airlines</span>
+      </div>
+      <div class="programa-card">
+        <div class="programa-logo smiles">SM</div>
+        <h3>Smiles</h3>
+        <p>Programa da Gol Linhas Aéreas com ampla cobertura de destinos no Brasil e exterior.</p>
+        <span class="programa-tag">Gol Linhas Aéreas</span>
+      </div>
+      <div class="programa-card">
+        <div class="programa-logo tudo">TA</div>
+        <h3>TudoAzul</h3>
+        <p>Programa de pontos da Azul Linhas Aéreas com foco em destinos regionais brasileiros.</p>
+        <span class="programa-tag">Azul Linhas Aéreas</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Como funciona -->
+  <section class="como" id="como">
+    <div class="como-inner">
+      <h2>Como funciona</h2>
+      <p>Simples, rápido e seguro para compradores e vendedores</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Anuncie suas milhas</h3>
+          <p>Cadastre a quantidade de milhas disponível, o programa e o preço por mil pontos.</p>
         </div>
-        <div style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 0.85rem 1.1rem; border: 1px solid rgba(255,255,255,0.08);">
-          <label for="contato-email" style="display: block; margin-bottom: 0.4rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8;">E-mail</label>
-          <input type="email" id="contato-email" name="email" required autocomplete="email" placeholder="seu@email.com" style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.25); color: #f0f4f8; font-size: 1rem; font-family: inherit;">
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Comprador encontra</h3>
+          <p>Outros usuários buscam no marketplace e encontram a oferta ideal para a viagem deles.</p>
         </div>
-        <button type="submit" style="margin-top: 0.25rem; padding: 0.85rem 1.25rem; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.45); background: linear-gradient(180deg, rgba(59, 130, 246, 0.35) 0%, rgba(37, 99, 235, 0.25) 100%); color: #f0f4f8; font-size: 0.95rem; font-weight: 600; font-family: inherit; cursor: pointer;">
-          Enviar
-        </button>
-      </form>
-    </section>
-  </main>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Negócio fechado</h3>
+          <p>Comprador e vendedor entram em contato e finalizam a transação com segurança.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h3>Todo mundo voa</h3>
+          <p>Vendedor monetiza milhas paradas. Comprador viaja com desconto. Plataforma cresce.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Final -->
+  <section class="cta-final">
+    <h2>Pronto para começar?</h2>
+    <p>Junte-se a quem já está comprando e vendendo milhas de forma inteligente. Anunciar é gratuito.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="anunciar.html" class="btn-primary btn-lg">Anunciar milhas grátis</a>
+      <a href="marketplace.html" class="btn-outline btn-lg">Explorar ofertas</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    © 2026 MilhasparaTodos · Marketplace de milhas aéreas brasileiras
+  </footer>
+
 </body>
 </html>
