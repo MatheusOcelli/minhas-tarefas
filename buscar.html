@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscar Voos — Milhas para Todos</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #f9fafb; color: #1a1a2e; }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 2rem; border-bottom: 1px solid #e5e7eb;
+      background: #fff; position: sticky; top: 0; z-index: 10;
+    }
+    .logo { font-size: 1.3rem; font-weight: 700; color: #1d4ed8; text-decoration: none; }
+    .logo span { color: #1a1a2e; }
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+    nav a { font-size: 0.9rem; color: #6b7280; text-decoration: none; }
+    nav a:hover { color: #1d4ed8; }
+    .btn-primary {
+      background: #1d4ed8; color: white; padding: 0.55rem 1.2rem;
+      border-radius: 8px; font-size: 0.9rem; text-decoration: none;
+      font-weight: 500; border: none; cursor: pointer;
+    }
+
+    /* Hero de busca */
+    .hero-busca {
+      background: #1d4ed8; padding: 3rem 2rem;
+      text-align: center; color: white;
+    }
+    .hero-busca h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .hero-busca p { font-size: 1rem; opacity: 0.85; margin-bottom: 2rem; }
+
+    .search-box {
+      background: #fff; border-radius: 16px; padding: 1.5rem;
+      max-width: 800px; margin: 0 auto; box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    }
+    .search-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto;
+      gap: 12px; align-items: end;
+    }
+    .search-field label {
+      display: block; font-size: 0.78rem; font-weight: 600;
+      color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+    }
+    .search-input {
+      width: 100%; padding: 0.75rem 1rem;
+      border: 1.5px solid #e5e7eb; border-radius: 10px;
+      font-size: 0.95rem; color: #1a1a2e; outline: none;
+      font-family: system-ui, sans-serif; background: #f9fafb;
+    }
+    .search-input:focus { border-color: #1d4ed8; background: #fff; }
+    .btn-buscar {
+      background: #1d4ed8; color: white; border: none;
+      border-radius: 10px; padding: 0.75rem 1.5rem;
+      font-size: 0.95rem; font-weight: 600; cursor: pointer;
+      white-space: nowrap; height: 46px;
+    }
+    .btn-buscar:hover { background: #1e40af; }
+
+    /* Resultados */
+    .main { max-width: 900px; margin: 2rem auto; padding: 0 2rem; }
+    .resultados-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .resultados-header h2 { font-size: 1.1rem; font-weight: 600; }
+    .resultados-header p { font-size: 0.85rem; color: #6b7280; }
+
+    .voo-card {
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 14px;
+      margin-bottom: 16px; overflow: hidden;
+    }
+    .voo-main {
+      display: grid; grid-template-columns: 1fr auto 1fr auto;
+      align-items: center; gap: 1rem; padding: 1.25rem 1.5rem;
+    }
+    .voo-rota { }
+    .voo-hora { font-size: 1.4rem; font-weight: 700; color: #1a1a2e; }
+    .voo-cidade { font-size: 0.8rem; color: #6b7280; margin-top: 2px; }
+    .voo-iata { font-size: 0.75rem; font-weight: 600; color: #1d4ed8; }
+
+    .voo-duracao { text-align: center; }
+    .voo-linha {
+      display: flex; align-items: center; gap: 6px; margin-bottom: 4px;
+    }
+    .linha { flex: 1; height: 1px; background: #e5e7eb; }
+    .aviao { font-size: 1rem; }
+    .voo-tempo { font-size: 0.78rem; color: #6b7280; text-align: center; }
+    .voo-paradas { font-size: 0.72rem; color: #6b7280; text-align: center; }
+
+    .voo-companhia {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cia-badge {
+      font-size: 0.75rem; font-weight: 700; padding: 4px 10px;
+      border-radius: 6px; letter-spacing: 0.03em;
+    }
+    .cia-latam { background: #fee2e2; color: #991b1b; }
+    .cia-gol { background: #fed7aa; color: #9a3412; }
+    .cia-azul { background: #dbeafe; color: #1e40af; }
+    .cia-nome { font-size: 0.82rem; color: #6b7280; }
+
+    /* Comparação de preços */
+    .voo-precos {
+      display: grid; grid-template-columns: 1fr 1fr;
+      border-top: 1px solid #f3f4f6;
+    }
+    .preco-opcao {
+      padding: 1rem 1.5rem;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .preco-opcao:first-child { border-right: 1px solid #f3f4f6; }
+    .preco-label { font-size: 0.75rem; color: #9ca3af; font-weight: 500; }
+    .preco-valor { font-size: 1.3rem; font-weight: 700; }
+    .preco-site { color: #6b7280; }
+    .preco-milhas { color: #1d4ed8; }
+    .preco-economia {
+      font-size: 0.75rem; color: #166534; background: #dcfce7;
+      padding: 2px 8px; border-radius: 20px; display: inline-block;
+      font-weight: 500; width: fit-content;
+    }
+    .preco-detalhe { font-size: 0.78rem; color: #9ca3af; }
+    .btn-comprar-milhas {
+      background: #1d4ed8; color: white; border: none;
+      border-radius: 8px; padding: 0.6rem 1.2rem;
+      font-size: 0.85rem; font-weight: 500; cursor: pointer;
+      margin-top: 6px; width: fit-content;
+    }
+    .btn-comprar-milhas:hover { background: #1e40af; }
+
+    .placeholder {
+      text-align: center; padding: 4rem 0; color: #9ca3af;
+    }
+    .placeholder-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .placeholder h3 { font-size: 1.1rem; color: #6b7280; margin-bottom: 0.5rem; }
+
+    .tag-direto { background: #dcfce7; color: #166534; font-size: 0.72rem; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+    .tag-escala { background: #fef3c7; color: #92400e; font-size: 0.72rem; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+
+    @media (max-width: 640px) {
+      .search-grid { grid-template-columns: 1fr 1fr; }
+      .voo-main { grid-template-columns: 1fr 1fr; }
+      .search-grid .btn-buscar { grid-column: 1 / -1; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">Milhas<span>paraTodos</span></a>
+    <nav>
+      <a href="buscar.html">Buscar voos</a>
+      <a href="marketplace.html">Comprar milhas</a>
+      <a href="anunciar.html">Vender milhas</a>
+    </nav>
+    <a href="anunciar.html" class="btn-primary">Anunciar milhas</a>
+  </header>
+
+  <!-- Hero com buscador -->
+  <div class="hero-busca">
+    <h1>Voe mais barato com milhas</h1>
+    <p>Compare o preço do site com o preço usando milhas da nossa plataforma</p>
+
+    <div class="search-box">
+      <div class="search-grid">
+        <div class="search-field">
+          <label>Origem</label>
+          <input type="text" id="origem" class="search-input" placeholder="Ex: GRU, São Paulo" />
+        </div>
+        <div class="search-field">
+          <label>Destino</label>
+          <input type="text" id="destino" class="search-input" placeholder="Ex: GIG, Rio de Janeiro" />
+        </div>
+        <div class="search-field">
+          <label>Ida</label>
+          <input type="date" id="data-ida" class="search-input" />
+        </div>
+        <div class="search-field">
+          <label>Volta</label>
+          <input type="date" id="data-volta" class="search-input" />
+        </div>
+        <button class="btn-buscar" onclick="buscarVoos()">Buscar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div id="placeholder" class="placeholder">
+      <div class="placeholder-icon">✈</div>
+      <h3>Busque seu voo acima</h3>
+      <p>Compare preços e economize voando com milhas</p>
+    </div>
+    <div id="resultados" style="display:none">
+      <div class="resultados-header">
+        <div>
+          <h2 id="titulo-resultado">Voos disponíveis</h2>
+          <p id="subtitulo-resultado"></p>
+        </div>
+      </div>
+      <div id="lista-voos"></div>
+    </div>
+  </div>
+
+  <script>
+    // Dados simulados de voos
+    const voosSimulados = [
+      {
+        origem: 'GRU', destino: 'GIG', cidade_origem: 'São Paulo', cidade_destino: 'Rio de Janeiro',
+        hora_partida: '06:30', hora_chegada: '07:40', duracao: '1h10',
+        companhia: 'latam', paradas: 0,
+        preco_site: 389, milhas_necessarias: 8000, preco_milhas: 224
+      },
+      {
+        origem: 'GRU', destino: 'GIG', cidade_origem: 'São Paulo', cidade_destino: 'Rio de Janeiro',
+        hora_partida: '09:15', hora_chegada: '10:25', duracao: '1h10',
+        companhia: 'gol', paradas: 0,
+        preco_site: 412, milhas_necessarias: 9000, preco_milhas: 252
+      },
+      {
+        origem: 'GRU', destino: 'GIG', cidade_origem: 'São Paulo', cidade_destino: 'Rio de Janeiro',
+        hora_partida: '14:00', hora_chegada: '15:10', duracao: '1h10',
+        companhia: 'azul', paradas: 0,
+        preco_site: 356, milhas_necessarias: 7500, preco_milhas: 210
+      },
+      {
+        origem: 'GRU', destino: 'FOR', cidade_origem: 'São Paulo', cidade_destino: 'Fortaleza',
+        hora_partida: '07:00', hora_chegada: '10:30', duracao: '3h30',
+        companhia: 'latam', paradas: 0,
+        preco_site: 890, milhas_necessarias: 22000, preco_milhas: 616
+      },
+      {
+        origem: 'GRU', destino: 'FOR', cidade_origem: 'São Paulo', cidade_destino: 'Fortaleza',
+        hora_partida: '11:20', hora_chegada: '16:40', duracao: '5h20',
+        companhia: 'gol', paradas: 1,
+        preco_site: 720, milhas_necessarias: 18000, preco_milhas: 504
+      },
+      {
+        origem: 'GRU', destino: 'REC', cidade_origem: 'São Paulo', cidade_destino: 'Recife',
+        hora_partida: '08:30', hora_chegada: '12:00', duracao: '3h30',
+        companhia: 'latam', paradas: 0,
+        preco_site: 780, milhas_necessarias: 19000, preco_milhas: 532
+      },
+      {
+        origem: 'GRU', destino: 'SSA', cidade_origem: 'São Paulo', cidade_destino: 'Salvador',
+        hora_partida: '06:00', hora_chegada: '08:30', duracao: '2h30',
+        companhia: 'azul', paradas: 0,
+        preco_site: 650, milhas_necessarias: 16000, preco_milhas: 448
+      },
+      {
+        origem: 'GIG', destino: 'GRU', cidade_origem: 'Rio de Janeiro', cidade_destino: 'São Paulo',
+        hora_partida: '08:00', hora_chegada: '09:15', duracao: '1h15',
+        companhia: 'latam', paradas: 0,
+        preco_site: 398, milhas_necessarias: 8500, preco_milhas: 238
+      },
+    ];
+
+    const ciaBadge = { latam: 'cia-latam', gol: 'cia-gol', azul: 'cia-azul' };
+    const ciaNome = { latam: 'LATAM', gol: 'GOL', azul: 'AZUL' };
+    const ciaNomeCompleto = { latam: 'Latam Airlines', gol: 'Gol Linhas Aéreas', azul: 'Azul Linhas Aéreas' };
+
+    function buscarVoos() {
+      const origem = document.getElementById('origem').value.trim().toUpperCase().slice(0, 3);
+      const destino = document.getElementById('destino').value.trim().toUpperCase().slice(0, 3);
+      const dataIda = document.getElementById('data-ida').value;
+
+      if (!origem || !destino) {
+        alert('Preencha origem e destino.');
+        return;
+      }
+
+      // Filtra voos pelo trecho ou mostra todos como simulação
+      let voos = voosSimulados.filter(v =>
+        v.origem === origem && v.destino === destino
+      );
+
+      // Se não encontrar exato, mostra voos simulados genéricos
+      if (voos.length === 0) {
+        voos = voosSimulados.slice(0, 4).map(v => ({
+          ...v,
+          origem: origem,
+          destino: destino,
+          cidade_origem: origem,
+          cidade_destino: destino
+        }));
+      }
+
+      document.getElementById('placeholder').style.display = 'none';
+      document.getElementById('resultados').style.display = 'block';
+      document.getElementById('titulo-resultado').textContent = `${voos.length} voos encontrados`;
+
+      const dataFormatada = dataIda
+        ? new Date(dataIda + 'T12:00:00').toLocaleDateString('pt-BR', {day: '2-digit', month: 'long'})
+        : '';
+      document.getElementById('subtitulo-resultado').textContent =
+        `${origem} → ${destino}${dataFormatada ? ' · ' + dataFormatada : ''}`;
+
+      renderVoos(voos);
+    }
+
+    function renderVoos(voos) {
+      const lista = document.getElementById('lista-voos');
+      lista.innerHTML = voos.map(v => {
+        const economia = Math.round(((v.preco_site - v.preco_milhas) / v.preco_site) * 100);
+        return `
+          <div class="voo-card">
+            <div class="voo-main">
+              <div class="voo-rota">
+                <div class="voo-hora">${v.hora_partida}</div>
+                <div class="voo-iata">${v.origem}</div>
+                <div class="voo-cidade">${v.cidade_origem}</div>
+              </div>
+              <div class="voo-duracao">
+                <div class="voo-linha">
+                  <div class="linha"></div>
+                  <span class="aviao">✈</span>
+                  <div class="linha"></div>
+                </div>
+                <div class="voo-tempo">${v.duracao}</div>
+                <div style="text-align:center;margin-top:4px;">
+                  ${v.paradas === 0
+                    ? '<span class="tag-direto">Direto</span>'
+                    : `<span class="tag-escala">${v.paradas} escala</span>`}
+                </div>
+              </div>
+              <div class="voo-rota">
+                <div class="voo-hora">${v.hora_chegada}</div>
+                <div class="voo-iata">${v.destino}</div>
+                <div class="voo-cidade">${v.cidade_destino}</div>
+              </div>
+              <div class="voo-companhia">
+                <div>
+                  <span class="cia-badge ${ciaBadge[v.companhia]}">${ciaNome[v.companhia]}</span>
+                  <div class="cia-nome" style="margin-top:4px;">${ciaNomeCompleto[v.companhia]}</div>
+                </div>
+              </div>
+            </div>
+            <div class="voo-precos">
+              <div class="preco-opcao">
+                <div class="preco-label">No site da companhia</div>
+                <div class="preco-valor preco-site">R$ ${v.preco_site.toLocaleString('pt-BR')}</div>
+                <div class="preco-detalhe">Preço em dinheiro</div>
+              </div>
+              <div class="preco-opcao">
+                <div class="preco-label">Com milhas na MilhasparaTodos</div>
+                <div class="preco-valor preco-milhas">R$ ${v.preco_milhas.toLocaleString('pt-BR')}</div>
+                <div class="preco-detalhe">${v.milhas_necessarias.toLocaleString('pt-BR')} milhas · você paga em reais</div>
+                <span class="preco-economia">Economize ${economia}% · R$ ${(v.preco_site - v.preco_milhas).toLocaleString('pt-BR')}</span>
+                <button class="btn-comprar-milhas" onclick="comprarPassagem('${v.companhia}', '${v.origem}', '${v.destino}', ${v.preco_milhas}, ${v.milhas_necessarias})">
+                  Comprar por R$ ${v.preco_milhas.toLocaleString('pt-BR')}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function comprarPassagem(cia, origem, destino, preco, milhas) {
+      alert(`Em breve!\n\nVoo ${origem} → ${destino} por R$ ${preco.toLocaleString('pt-BR')}\nUsando ${milhas.toLocaleString('pt-BR')} milhas ${cia.toUpperCase()}\n\nEssa funcionalidade estará disponível em breve.`);
+    }
+
+    // Permite buscar apertando Enter
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') buscarVoos();
+    });
+  </script>
+</body>
+</html>
